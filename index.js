@@ -1,8 +1,8 @@
 try {
-  module.exports = require("./build/Release/tree_sitter_css_binding");
+  module.exports = require("./build/Release/tree_sitter_less_binding");
 } catch (error) {
   try {
-    module.exports = require("./build/Debug/tree_sitter_css_binding");
+    module.exports = require("./build/Debug/tree_sitter_less_binding");
   } catch (_) {
     throw error
   }

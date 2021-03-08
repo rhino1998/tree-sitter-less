@@ -1,7 +1,7 @@
 {
-  "name": "tree-sitter-css",
+  "name": "tree-sitter-less",
   "version": "0.16.0",
-  "description": "CSS grammar for tree-sitter",
+  "description": "Less grammar for tree-sitter",
   "main": "index.js",
   "keywords": [
     "parser",
@@ -21,11 +21,10 @@
   },
   "tree-sitter": [
     {
-      "scope": "source.css",
+      "scope": "source.less",
       "file-types": [
-        "css"
-      ],
-      "injection-regex": "^css$"
+        "less"
+      ]
     }
   ]
 }
