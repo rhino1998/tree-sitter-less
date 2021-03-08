@@ -1,10 +1,9 @@
-tree-sitter-css
+tree-sitter-less
 ===============
 
-[![Build Status](https://travis-ci.org/tree-sitter/tree-sitter-css.svg?branch=master)](https://travis-ci.org/tree-sitter/tree-sitter-css)
-[![Build status](https://ci.appveyor.com/api/projects/status/smdphgf4ns9jglw5/branch/master?svg=true)](https://ci.appveyor.com/project/maxbrunsfeld/tree-sitter-css/branch/master)
+LESS grammar for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
-CSS grammar for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
+Based on [tree-sitter-css](https://github.com/tree-sitter/tree-sitter-css)
 
 References
 
