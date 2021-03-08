@@ -1,7 +1,7 @@
 tree-sitter-less
 ===============
 
-WIP (also only tested against neovim/inside)
+WIP (also only tested against/inside neovim)
 
 PRs & issues welcome
 
