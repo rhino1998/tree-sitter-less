@@ -7,15 +7,32 @@ Import statements
 @import 'custom.css';
 @import url("chrome://communicator/skin/");
 @import "common.css" screen;
+@import (less) "common.less";
+@import (optional, less) "common.less";
 
 ---
 
 (stylesheet
-  (import_statement (call_expression (function_name) (arguments (string_value))) (keyword_query))
-  (import_statement (call_expression (function_name) (arguments (string_value))) (keyword_query))
+  (import_statement (call_expression (function_name) (arguments (string_value))) (plain_value))
+  (import_statement (call_expression (function_name) (arguments (string_value))) (plain_value))
   (import_statement (string_value))
   (import_statement (call_expression (function_name) (arguments (string_value))))
-  (import_statement (string_value) (keyword_query)))
+  (import_statement (string_value) (plain_value))
+  (import_statement (import_option) (string_value))
+  (import_statement (import_option) (import_option) (string_value))
+  )
+
+==============================
+Plugin statements
+==============================
+
+@plugin "example";
+
+---
+
+(stylesheet
+  (plugin_statement (string_value))
+  )
 
 ==============================
 Namespace statements
@@ -31,7 +48,7 @@ Namespace statements
 @namespace prefix url(XML-namespace-URL);
 @namespace prefix "XML-namespace-URL";
 
----
+--iidad-
 
 (stylesheet
   (comment)
@@ -40,14 +57,14 @@ Namespace statements
   (namespace_statement (call_expression (function_name) (arguments (plain_value))))
   (namespace_statement (namespace_name) (call_expression (function_name) (arguments (plain_value))))
   (comment)
-  (namespace_statement (namespace_name) (call_expression (function_name) (arguments (plain_value))))
+  (namespace_statement (namespace_name) (call_expression (namespace_name) (arguments (plain_value))))
   (namespace_statement (namespace_name) (string_value)))
 
 ==============================
 Keyframes statements
 ==============================
 
-@keyframes important1 {
+@--keyframes important1 {
   from { margin-top: 50px; }
   50%  { margin-top: 150px !important; } /* ignored */
   to   { margin-top: 100px; }
@@ -56,11 +73,41 @@ Keyframes statements
 ---
 
 (stylesheet
-  (keyframes_statement (keyframes_name) (keyframe_block_list
-    (keyframe_block (from) (block (declaration (property_name) (integer_value (unit)))))
-    (keyframe_block (integer_value (unit)) (block (declaration (property_name) (integer_value (unit)) (important))))
+  (keyframes_statement (keyword) (keyframes_name) (block
+    (rule_set (selectors (tag_name)) (block (declaration (property_name) (integer_value (unit)))))
+    (rule_set (selectors (integer_value (unit))) (block (declaration (property_name) (important_value (integer_value (unit))))))
     (comment)
-    (keyframe_block (to) (block (declaration (property_name) (integer_value (unit))))))))
+    (rule_set (selectors (tag_name)) (block (declaration (property_name) (integer_value (unit))))))))
+
+=========================
+Keyframe Mixins
+=========================
+
+.keyframes(@name; @arguments) {
+  @-moz-keyframes @name { @arguments();  }
+  @-webkit-keyframes @name { @arguments();  }
+  @keyframes @name { @arguments();  }
+}
+
+---
+
+(stylesheet
+  (mixin_def
+    (class_selector (class_name))
+    (params
+      (variable (variable_name))
+      (variable (variable_name)))
+    (block
+      (keyframes_statement (keyword)
+        (variable (variable_name))
+        (block (mixin (variable (variable_name)) (arguments))))
+      (keyframes_statement (keyword)
+        (variable (variable_name))
+        (block (mixin (variable (variable_name)) (arguments))))
+      (keyframes_statement (keyword)
+        (variable (variable_name))
+        (block (mixin (variable (variable_name)) (arguments))))))
+  )
 
 ==============================
 Media statements
@@ -122,7 +169,7 @@ Supports statements
   (supports_statement
     (unary_query (selector_query (pseudo_class_selector
       (class_name)
-      (arguments (tag_name) (tag_name)))))
+      (arguments (tag_name) (plain_value)))))
     (block)))
 
 ==============================
@@ -153,7 +200,8 @@ Other at-statements
     (block
       (declaration (property_name) (string_value))
       (declaration (property_name)
-        (call_expression (function_name) (arguments (string_value)))
-        (call_expression (function_name) (arguments (string_value)))
-        (call_expression (function_name) (arguments (string_value)))
-        (call_expression (function_name) (arguments (string_value)))))))
+        (compound_value
+          (call_expression (function_name) (arguments (string_value)))
+          (call_expression (function_name) (arguments (string_value)))
+          (call_expression (function_name) (arguments (string_value)))
+          (call_expression (function_name) (arguments (string_value))))))))

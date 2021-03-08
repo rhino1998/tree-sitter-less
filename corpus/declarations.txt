@@ -37,27 +37,36 @@ div {
       (property_name)
       (call_expression (function_name) (arguments
         (plain_value)
-        (plain_value)
-        (integer_value (unit)))))
+        (compound_value
+          (plain_value)
+          (integer_value (unit))))))
     (declaration
       (property_name)
       (call_expression (function_name) (arguments
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))
-        (integer_value (unit))))))))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))
+        (compound_value
+          (integer_value (unit))
+          (integer_value (unit)))))))))
 
 ============================
 Color literals
@@ -142,6 +151,7 @@ Strings
 a {
   b: '';
   c: '\'hi\'';
+  d: ~'\'hi\'';
 }
 
 ---
@@ -151,6 +161,29 @@ a {
     (selectors (tag_name))
     (block
       (declaration (property_name) (string_value))
+      (declaration (property_name) (string_value))
+      (declaration (property_name) (string_value)))))
+
+============================
+Interpolated Strings
+============================
+
+a {
+  d: '@false-positive';
+  b: '@{var-name}';
+  e: ~'@{var-name}';
+  c: '\'hi\'';
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (string_value))
+      (declaration (property_name) (string_value (interpolated_variable (variable_name))))
+      (declaration (property_name) (string_value (interpolated_variable (variable_name))))
       (declaration (property_name) (string_value)))))
 
 ============================
@@ -183,7 +216,7 @@ a {
   (rule_set
     (selectors (tag_name))
     (block
-      (declaration (property_name) (plain_value) (important)))))
+      (declaration (property_name) (important_value (plain_value))))))
 
 ============================
 Declarations without trailing semicolons
@@ -219,11 +252,12 @@ a {
     (selectors (tag_name))
     (block
       (declaration (property_name) (call_expression (function_name) (arguments
+        (compound_value
+          (integer_value (unit))
+          (comment)
+          (plain_value)
         (integer_value (unit))
-        (comment)
-        (plain_value)
-        (integer_value (unit))
-        (integer_value (unit)))))
+        (integer_value (unit))))))
       (declaration (property_name) (call_expression (function_name) (arguments
         (integer_value (unit))
         (integer_value (unit))
@@ -240,5 +274,9 @@ a-property: calc(5px + var(--a-variable));
 ---
 
 (stylesheet
-  (declaration (property_name) (plain_value))
-  (declaration (property_name) (call_expression (function_name) (arguments (binary_expression (integer_value (unit)) (call_expression (function_name) (arguments (plain_value))))))))
+  (declaration (property_name) (integer_value (unit)))
+  (declaration (property_name) 
+    (call_expression (function_name) 
+      (arguments 
+      (binary_expression (integer_value (unit))
+        (call_expression (function_name) (arguments (plain_value))))))))

@@ -37,9 +37,201 @@ div.class-b, .class-c.class-d {}
     (block))
   (rule_set
     (selectors
-      (class_selector (tag_name) (class_name))
-      (class_selector (class_selector (class_name)) (class_name)))
+      (compound_selector (tag_name) (class_selector (class_name)))
+      (compound_selector (class_selector (class_name)) (class_selector (class_name))))
     (block)))
+
+
+=========================
+Detached rulesets
+=========================
+
+@example: {}
+
+@nested-example: {
+  @inner: {}
+}
+---
+
+(stylesheet
+  (variable_def
+    (variable (variable_name))
+    (block))
+  (variable_def
+    (variable (variable_name))
+    (block
+      (variable_def
+        (variable (variable_name))
+        (block))))
+  )
+
+=========================
+Maps
+=========================
+
+@nested-example: {
+  @inner: {
+    element: value;
+  }
+}
+
+@example: @nested-example[@@inner][value];
+
+---
+
+(stylesheet
+  (variable_def
+    (variable (variable_name))
+    (block
+      (variable_def
+        (variable (variable_name))
+        (block
+          (declaration (property_name) (plain_value))))))
+  (variable_def
+    (variable (variable_name))
+    (index_expression
+      (index_expression
+        (variable (variable_name))
+        (expand_variable (variable_name)))
+      (property_name)))
+  )
+
+=========================
+Interpolated Variables
+=========================
+
+@ba: ba;
+@bare: @{ba};
+@prefix: ke-@{ba};
+@suffix: @{ba}-b;
+@kebab: ke-@{ba}-b;
+
+@id: id;
+@bare: @{id};
+@prefix: pre@{id};
+@suffix: @{id}suf;
+@sandwich: pre@{id}suf;
+
+@{example} {}
+---
+
+(stylesheet
+  (variable_def (variable (variable_name)) (plain_value))
+  (variable_def (variable (variable_name)) 
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (variable_def (variable (variable_name)) 
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (variable_def (variable (variable_name)) 
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (variable_def (variable (variable_name))
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (variable_def (variable (variable_name)) (plain_value))
+  (variable_def (variable (variable_name)) 
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (variable_def (variable (variable_name)) 
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (variable_def (variable (variable_name)) 
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (variable_def (variable (variable_name))
+    (plain_value
+      (interpolated_variable (variable_name))))
+  (rule_set
+    (selectors
+      (tag_name (interpolated_variable (variable_name))))
+    (block))
+  )
+
+=========================
+Mixins
+=========================
+
+#example() {}
+.example();
+
+.nested-example() {
+  .nested() {
+  }
+}
+
+.nested-example.nested();
+---
+
+(stylesheet
+  (mixin_def
+    (id_selector (id_name))
+    (params)
+    (block))
+  (mixin (class_selector (class_name))
+    (arguments))
+  (mixin_def
+    (class_selector (class_name))
+    (params)
+    (block
+      (mixin_def
+        (class_selector (class_name))
+        (params)
+        (block))))
+  (mixin (class_selector (class_name)) (class_selector (class_name))
+    (arguments))
+  )
+
+=========================
+Mixins Guards
+=========================
+@var: 5;
+.example() when not (@var < 5){}
+.example();
+
+.nested-example() {
+  .nested() when (@var > 0) and (@var < 5) {
+    width: 10px;
+  }
+}
+
+.nested-example.nested();
+---
+
+(stylesheet
+  (variable_def (variable (variable_name)) (integer_value))
+  (mixin_def
+    (class_selector (class_name))
+    (params)
+    (guard
+      (guard_unary_expression
+        (binary_expression
+          (variable (variable_name))
+          (integer_value))))
+    (block))
+  (mixin (class_selector (class_name))
+    (arguments))
+  (mixin_def
+    (class_selector (class_name))
+    (params)
+    (block
+      (mixin_def
+        (class_selector (class_name))
+        (params)
+        (guard
+          (guard_binary_expression
+            (binary_expression
+              (variable (variable_name))
+              (integer_value))
+            (binary_expression
+              (variable (variable_name))
+              (integer_value))))
+        (block
+          (declaration (property_name) (integer_value (unit)))))))
+  (mixin (class_selector (class_name)) (class_selector (class_name))
+    (arguments))
+  )
+
 
 =========================
 Id selectors
@@ -51,7 +243,7 @@ Id selectors
 
 (stylesheet
   (rule_set
-    (selectors (id_selector (id_name)) (id_selector (tag_name) (id_name)))
+    (selectors (id_selector (id_name)) (compound_selector (tag_name) (id_selector (id_name))))
     (block)))
 
 =========================
@@ -69,7 +261,7 @@ a[b] {}
   (rule_set (selectors (attribute_selector (attribute_name))) (block))
   (rule_set (selectors (attribute_selector (attribute_name) (plain_value))) (block))
   (rule_set (selectors (attribute_selector (attribute_name) (plain_value))) (block))
-  (rule_set (selectors (attribute_selector (tag_name) (attribute_name))) (block)))
+  (rule_set (selectors (compound_selector (tag_name) (attribute_selector (attribute_name)))) (block)))
 
 =========================
 Pseudo-class selectors
@@ -82,7 +274,7 @@ a:hover {}
 
 (stylesheet
   (rule_set
-    (selectors (pseudo_class_selector (tag_name) (class_name)))
+    (selectors (compound_selector (tag_name) (pseudo_class_selector (class_name))))
     (block))
   (rule_set
     (selectors (pseudo_class_selector (class_name) (arguments (integer_value))))
@@ -98,7 +290,28 @@ a::first-line {}
 
 (stylesheet
   (rule_set
-    (selectors (pseudo_element_selector (tag_name) (tag_name)))
+    (selectors (compound_selector (tag_name) (pseudo_element_selector (tag_name))))
+    (block)))
+
+=========================
+Slash selectors
+=========================
+
+/deep/ {}
+/deep/ svg {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (slash_selector))
+    (block))
+  (rule_set
+    (selectors
+      (descendant_selector
+        (slash_selector)
+        (tag_name)))
     (block)))
 
 =========================
@@ -155,7 +368,7 @@ a {
   (rule_set
     (selectors (tag_name))
     (block
-      (rule_set (selectors (class_selector (nesting_selector) (class_name))) (block))
+      (rule_set (selectors (compound_selector  (nesting_selector) (class_selector (class_name)))) (block))
       (rule_set (selectors (descendant_selector (nesting_selector) (tag_name))) (block))
       (rule_set (selectors (child_selector (nesting_selector) (tag_name))) (block)))))
 
@@ -171,13 +384,13 @@ a.b ~ c.d {}
 (stylesheet
   (rule_set
     (selectors (sibling_selector
-      (class_selector (tag_name) (class_name))
-      (class_selector (tag_name) (class_name))))
+      (compound_selector (tag_name) (class_selector (class_name)))
+      (compound_selector (tag_name) (class_selector (class_name)))))
     (block))
   (rule_set
     (selectors (adjacent_sibling_selector
-      (class_selector (class_selector (class_name)) (class_name))
-      (class_selector (class_selector (class_name)) (class_name))))
+      (compound_selector (class_selector (class_name)) (class_selector (class_name)))
+      (compound_selector (class_selector (class_name)) (class_selector (class_name)))))
     (block)))
 
 ===========================
@@ -191,14 +404,18 @@ a:not(:hover) {}
 
 (stylesheet
   (rule_set
-    (selectors (pseudo_class_selector
-      (tag_name)
-      (class_name)
-      (arguments (pseudo_class_selector (class_name)))))
+    (selectors 
+      (compound_selector
+        (tag_name)
+        (pseudo_class_selector
+          (class_name)
+          (arguments (pseudo_class_selector (class_name))))))
     (block))
   (rule_set
-    (selectors (pseudo_class_selector
-      (class_selector (class_name))
-      (class_name)
-      (arguments (child_selector (tag_name) (class_selector (class_name))))))
+    (selectors 
+      (compound_selector
+        (class_selector (class_name))
+        (pseudo_class_selector
+          (class_name)
+          (arguments (child_selector (tag_name) (class_selector (class_name)))))))
     (block)))
